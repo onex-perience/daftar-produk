@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onexperience.id</title>
+    <style>
+        /* === VARIABEL WARNA & RESET === */
+        :root {
+            --primary-light: #e0f7fa;
+            /* Biru muda dasar */
+            --primary: #4dd0e1;
+            /* Biru utama */
+            --primary-dark: #0097a7;
+            /* Biru gelap untuk teks */
+            --white: #ffffff;
+            --bg-color: #f4fcfd;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: #333;
+            padding-bottom: 100px;
+            /* Ruang ekstra agar produk paling bawah tidak tertutup footer */
+        }
+
+        /* === HEADER GLASSMORPHISM === */
+        header {
+            position: sticky;
+            top: 15px;
+            width: 90%;
+            max-width: 400px;
+            margin: 15px auto;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            /* Dukungan Safari */
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50px;
+            text-align: center;
+            padding: 12px 20px;
+            box-shadow: 0 8px 32px rgba(0, 151, 167, 0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        header.scrolled {
+            max-width: 200px;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 4px 15px rgba(0, 151, 167, 0.1);
+        }
+
+        header h1 {
+            font-size: 1.3rem;
+            color: var(--primary-dark);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: font-size 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        header.scrolled h1 {
+            font-size: 1rem;
+        }
+
+        /* === BANNER PENGUMUMAN === */
+        .announcement-banner {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            text-align: center;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin: 10px auto 15px;
+            width: 85%;
+            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(0, 151, 167, 0.2);
+            animation: bounceInDown 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+            transform: translateY(-20px);
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes bounceInDown {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* === KONTEN UTAMA & SCROLL HORIZONTAL === */
+        main {
+            padding: 15px 0;
+        }
+
+        .section-title {
+            padding: 0 20px;
+            font-size: 1.1rem;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+
+        .product-row {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 5px 20px 20px 20px;
+            scroll-padding-inline: 20px;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            /* Sembunyikan scrollbar di Firefox */
+        }
+
+        .product-row::-webkit-scrollbar {
+            display: none;
+            /* Sembunyikan scrollbar di Chrome/Safari */
+        }
+
+        /* === KARTU PRODUK === */
+        .card {
+            min-width: 140px;
+            max-width: 140px;
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            scroll-snap-align: start;
+            overflow: hidden;
+            border: 1px solid #ebf9fa;
+        }
+
+        .card img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            background-color: #eee;
+            /* Placeholder sebelum loading */
+        }
+
+        .card-body {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-price {
+            font-weight: bold;
+            color: var(--primary-dark);
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .btn-pesan {
+            margin-top: auto;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .btn-pesan:active {
+            background-color: var(--primary-dark);
+        }
+
+        /* === POP-UP (MODAL) PRODUK === */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+            /* Muncul dari bawah ala mobile apps */
+        }
+
+        .modal-content {
+            background: var(--white);
+            width: 100%;
+            max-height: 85vh;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        /* Slider Gambar di Modal */
+        .modal-gallery {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 10px;
+            margin-bottom: 15px;
+            scrollbar-width: none;
+        }
+
+        .modal-gallery::-webkit-scrollbar {
+            display: none;
+        }
+
+        .modal-gallery img {
+            width: 100%;
+            min-width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            scroll-snap-align: center;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .modal-price {
+            font-size: 1.4rem;
+            color: var(--primary-dark);
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .modal-desc {
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .modal-btn-action {
+            width: 100%;
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        /* === FLOATING FOOTER WHATSAPP === */
+        .floating-footer-wrapper {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            /* Tersembunyi di bawah pada awalnya */
+            transform: translateX(-50%) translateY(100px);
+            opacity: 0;
+            display: flex;
+            gap: 12px;
+            width: 90%;
+            max-width: 400px;
+            z-index: 100;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            /* Supaya tak menghalangi klik saat hidden */
+        }
+
+        .floating-footer-wrapper.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .floating-footer-text,
+        .floating-footer-btn {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 151, 167, 0.3);
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0, 151, 167, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-footer-text {
+            flex-grow: 1;
+            padding: 12px 20px;
+            color: var(--primary-dark);
+            font-weight: bold;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .floating-footer-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            border: none;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .floating-footer-btn:active {
+            transform: scale(0.9);
+            box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Onexperience.id</h1>
+    </header>
+
+    <div class="announcement-banner">
+        ✨ COD free ongkir seputaran Tarakan! ✨
+    </div>
+
+    <main id="main-content">
+    </main>
+
+    <div class="modal-overlay" id="productModal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal(true)">&times;</button>
+            <div class="modal-gallery" id="modalGallery"></div>
+            <h2 class="modal-title" id="modalTitle">Nama Barang</h2>
+            <div class="modal-price" id="modalPrice">Rp 0</div>
+            <div class="modal-desc" id="modalDesc">Deskripsi barang...</div>
+            <button class="modal-btn-action">Beli Sekarang</button>
+        </div>
+    </div>
+
+    <div class="floating-footer-wrapper" id="waFooter">
+        <div class="floating-footer-text">
+            Pesan di WhatsApp
+        </div>
+        <a href="https://wa.me/" class="floating-footer-btn" target="_blank" title="Chat WhatsApp">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
+                <path
+                    d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z" />
+            </svg>
+        </a>
+    </div>
+
+    <script>
+        // =========================================================================
+        // PUSAT DATA PRODUK - Cara Menambahkan Barang Baru
+        // =========================================================================
+        // Kamu hanya perlu menambah/mengedit objek di dalam Array ini.
+        // Formatnya: { id, nama, harga, gambar: [array foto], deskripsi }
+
+        const dataToko = [
+            {
+                kategori: "Barang Baru",
+                produk: [
+                    { id: 1, nama: "Sepatu Sneakers Biru", harga: "Rp 250.000", gambar: ["https://picsum.photos/400?1", "https://picsum.photos/400?2"], deskripsi: "Sneakers edisi terbaru, sangat nyaman digunakan untuk jalan-jalan dengan bahan mesh yang breathable." },
+                    { id: 2, nama: "Tas Ransel Anti Air", harga: "Rp 180.000", gambar: ["https://picsum.photos/400?3"], deskripsi: "Tas ransel cocok untuk kuliah dan kerja. Tahan air hujan ringan." },
+                    { id: 3, nama: "Jam Tangan Minimalis", harga: "Rp 150.000", gambar: ["https://picsum.photos/400?4"], deskripsi: "Jam tangan dengan desain elegan dan strap kulit sintetis berkualitas." },
+                    { id: 4, nama: "Kacamata Anti Radiasi", harga: "Rp 95.000", gambar: ["https://picsum.photos/400?13"], deskripsi: "Lindungi mata saat menatap layar komputer seharian." }
+                ]
+            },
+            {
+                kategori: "Barang Promo",
+                produk: [
+                    { id: 5, nama: "Kaos Polos Cotton Combed", harga: "Rp 45.000", gambar: ["https://picsum.photos/400?5", "https://picsum.photos/400?6"], deskripsi: "Kaos sangat lembut. Promo beli 2 gratis 1." },
+                    { id: 6, nama: "Topi Baseball", harga: "Rp 35.000", gambar: ["https://picsum.photos/400?7"], deskripsi: "Topi kasual, bahan kanvas tebal. Diskon 50%!" },
+                    { id: 7, nama: "Dompet Kulit Pria", harga: "Rp 75.000", gambar: ["https://picsum.photos/400?8"], deskripsi: "Dompet lipat tipis namun muat banyak kartu." }
+                ]
+            },
+            {
+                kategori: "Aksesoris Acak",
+                produk: [
+                    { id: 8, nama: "Earphone TWS Bluetooth", harga: "Rp 120.000", gambar: ["https://picsum.photos/400?9", "https://picsum.photos/400?10", "https://picsum.photos/400?11"], deskripsi: "Suara bass mantap, baterai tahan 4 jam pemakaian aktif." },
+                    { id: 9, nama: "Kabel Data Type-C", harga: "Rp 25.000", gambar: ["https://picsum.photos/400?12"], deskripsi: "Kabel braided, mendukung fast charging hingga 3A." }
+                ]
+            }
+        ];
+
+        // Menyimpan semua produk ke dalam satu referensi datar untuk pencarian modal
+        const semuaProduk = dataToko.flatMap(kat => kat.produk);
+
+        // =========================================================================
+        // SISTEM RENDER HTML
+        // =========================================================================
+        const mainContent = document.getElementById("main-content");
+
+        // Fungsi me-render kategori dan baris produk
+        dataToko.forEach(kategoriData => {
+            // Buat Judul Kategori
+            const titleElement = document.createElement("h2");
+            titleElement.className = "section-title";
+            titleElement.innerText = kategoriData.kategori;
+            mainContent.appendChild(titleElement);
+
+            // Buat Kontainer Scroll Horizontal
+            const rowElement = document.createElement("div");
+            rowElement.className = "product-row";
+
+            // Salin data produk agar data asli di dalam array tidak rusak
+            let produkRender = [...kategoriData.produk];
+
+            // Workflow: Jika ini adalah kategori ke-3 (indeks array ke-2) atau setelahnya, 
+            // maka aktifkan fungsi pengacakan
+            if (dataToko.indexOf(kategoriData) >= 2) {
+                produkRender.sort(() => Math.random() - 0.5);
+            }
+
+            // Loop untuk setiap barang yang sudah disortir/diacak
+            produkRender.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.onclick = () => openModal(item.id);
+
+                card.innerHTML = `
+                    <img src="${item.gambar[0]}" alt="${item.nama}" loading="lazy">
+                    <div class="card-body">
+                        <div class="card-title">${item.nama}</div>
+                        <div class="card-price">${item.harga}</div>
+                        <button class="btn-pesan" onclick="event.stopPropagation(); openModal(${item.id})">Cek</button>
+                    </div>
+                `;
+                rowElement.appendChild(card);
+            });
+
+            mainContent.appendChild(rowElement);
+        });
+
+        // =========================================================================
+        // LOGIKA POP-UP (MODAL)
+        // =========================================================================
+        const modalOverlay = document.getElementById("productModal");
+
+        function openModal(idProduk) {
+            // Cari data produk berdasarkan ID
+            const produk = semuaProduk.find(p => p.id === idProduk);
+            if (!produk) return;
+
+            // Masukkan data ke dalam Modal
+            document.getElementById("modalTitle").innerText = produk.nama;
+            document.getElementById("modalPrice").innerText = produk.harga;
+            document.getElementById("modalDesc").innerText = produk.deskripsi;
+
+            // Generate gallery gambar (bisa di-swipe)
+            const gallery = document.getElementById("modalGallery");
+            gallery.innerHTML = ""; // Bersihkan gambar sebelumnya
+            produk.gambar.forEach(url => {
+                const img = document.createElement("img");
+                img.src = url;
+                gallery.appendChild(img);
+            });
+
+            // Tampilkan Modal
+            modalOverlay.style.display = "flex";
+            document.body.style.overflow = "hidden"; // Kunci scroll di background
+        }
+
+        // Tutup Modal (Bisa dengan tombol X atau klik background hitam)
+        function closeModal(forceClose = false) {
+            if (forceClose || event.target === modalOverlay) {
+                modalOverlay.style.display = "none";
+                document.body.style.overflow = "auto"; // Buka kembali scroll background
+            }
+        }
+
+        // =========================================================================
+        // EFEK SCROLL (Header Mengecil & Footer Muncul)
+        // =========================================================================
+        window.addEventListener("scroll", () => {
+            const header = document.querySelector("header");
+            const footer = document.getElementById("waFooter");
+
+            if (window.scrollY > 50) {
+                header.classList.add("scrolled");
+                if (footer) footer.classList.add("visible");
+            } else {
+                header.classList.remove("scrolled");
+                if (footer) footer.classList.remove("visible");
+            }
+        });
+    </script>
+</body>
+
+</html>
