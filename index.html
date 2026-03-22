@@ -103,12 +103,42 @@
             padding: 15px 0;
         }
 
-        .section-title {
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 0 20px;
-            font-size: 1.1rem;
-            color: var(--primary-dark);
             margin-bottom: 10px;
             margin-top: 20px;
+        }
+
+        .section-title-text {
+            font-size: 1.1rem;
+            color: var(--primary-dark);
+        }
+
+        .btn-lihat-semua {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .category-modal-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding-bottom: 20px;
+        }
+
+        .category-modal-grid .card {
+            min-width: unset;
+            max-width: unset;
+            width: 100%;
+            scroll-snap-align: unset;
         }
 
         .product-row {
@@ -376,6 +406,14 @@
     <main id="main-content">
     </main>
 
+    <div class="modal-overlay" id="categoryModal" onclick="closeCategoryModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeCategoryModal(true)">&times;</button>
+            <h2 class="modal-title" id="categoryModalTitle" style="margin-bottom: 15px;">Kategori</h2>
+            <div class="category-modal-grid" id="categoryModalGrid"></div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="productModal" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <button class="close-btn" onclick="closeModal(true)">&times;</button>
@@ -410,10 +448,7 @@
             {
                 kategori: "Barang Baru",
                 produk: [
-                    { id: 1, nama: "Sepatu Sneakers Biru", harga: "Rp 250.000", gambar: ["https://picsum.photos/400?1", "https://picsum.photos/400?2"], deskripsi: "Sneakers edisi terbaru, sangat nyaman digunakan untuk jalan-jalan dengan bahan mesh yang breathable." },
-                    { id: 2, nama: "Tas Ransel Anti Air", harga: "Rp 180.000", gambar: ["https://picsum.photos/400?3"], deskripsi: "Tas ransel cocok untuk kuliah dan kerja. Tahan air hujan ringan." },
-                    { id: 3, nama: "Jam Tangan Minimalis", harga: "Rp 150.000", gambar: ["https://picsum.photos/400?4"], deskripsi: "Jam tangan dengan desain elegan dan strap kulit sintetis berkualitas." },
-                    { id: 4, nama: "Kacamata Anti Radiasi", harga: "Rp 95.000", gambar: ["https://picsum.photos/400?13"], deskripsi: "Lindungi mata saat menatap layar komputer seharian." }
+                    { id: 1, nama: "Jasa buatkan website", harga: "Start From Rp 35.000", gambar: ["barang/web1.png", "barang/web2.png"], deskripsi: "Website untuk UMKM, Portofolio/branding, dan lain sebagainya. Harga terjangkau dan kualitas terjamin." }
                 ]
             },
             {
@@ -443,11 +478,22 @@
 
         // Fungsi me-render kategori dan baris produk
         dataToko.forEach(kategoriData => {
-            // Buat Judul Kategori
+            // Buat Header Kategori
+            const headerElement = document.createElement("div");
+            headerElement.className = "section-header";
+
             const titleElement = document.createElement("h2");
-            titleElement.className = "section-title";
+            titleElement.className = "section-title-text";
             titleElement.innerText = kategoriData.kategori;
-            mainContent.appendChild(titleElement);
+
+            const seeAllBtn = document.createElement("button");
+            seeAllBtn.className = "btn-lihat-semua";
+            seeAllBtn.innerText = "Lihat Semua";
+            seeAllBtn.onclick = () => openCategoryModal(kategoriData.kategori);
+
+            headerElement.appendChild(titleElement);
+            headerElement.appendChild(seeAllBtn);
+            mainContent.appendChild(headerElement);
 
             // Buat Kontainer Scroll Horizontal
             const rowElement = document.createElement("div");
@@ -516,6 +562,50 @@
             if (forceClose || event.target === modalOverlay) {
                 modalOverlay.style.display = "none";
                 document.body.style.overflow = "auto"; // Buka kembali scroll background
+            }
+        }
+
+        // =========================================================================
+        // LOGIKA POP-UP KATEGORI PADA TOMBOL LIHAT SEMUA
+        // =========================================================================
+        const categoryModalOverlay = document.getElementById("categoryModal");
+
+        function openCategoryModal(namaKategori) {
+            const kategoriData = dataToko.find(k => k.kategori === namaKategori);
+            if (!kategoriData) return;
+
+            document.getElementById("categoryModalTitle").innerText = namaKategori;
+            
+            const grid = document.getElementById("categoryModalGrid");
+            grid.innerHTML = "";
+
+            kategoriData.produk.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.onclick = () => {
+                    closeCategoryModal(true);
+                    setTimeout(() => openModal(item.id), 10);
+                };
+
+                card.innerHTML = `
+                    <img src="${item.gambar[0]}" alt="${item.nama}" loading="lazy">
+                    <div class="card-body">
+                        <div class="card-title">${item.nama}</div>
+                        <div class="card-price">${item.harga}</div>
+                        <button class="btn-pesan" onclick="event.stopPropagation(); closeCategoryModal(true); setTimeout(() => openModal(${item.id}), 10);">Cek</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            categoryModalOverlay.style.display = "flex";
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeCategoryModal(forceClose = false) {
+            if (forceClose === true || (window.event && window.event.target === categoryModalOverlay)) {
+                categoryModalOverlay.style.display = "none";
+                document.body.style.overflow = "auto";
             }
         }
 
