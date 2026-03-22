@@ -195,11 +195,25 @@
             overflow: hidden;
         }
 
+        .card-price-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .card-price-original {
+            font-size: 0.75rem;
+            color: #999;
+            text-decoration: line-through;
+            align-self: flex-end;
+            margin-bottom: -2px;
+        }
+
         .card-price {
             font-weight: bold;
             color: var(--primary-dark);
             font-size: 1rem;
-            margin-bottom: 10px;
         }
 
         .btn-pesan {
@@ -301,11 +315,25 @@
             margin-bottom: 5px;
         }
 
+        .modal-price-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .modal-price-original {
+            font-size: 0.95rem;
+            color: #999;
+            text-decoration: line-through;
+            align-self: flex-end;
+            margin-bottom: -4px;
+        }
+
         .modal-price {
             font-size: 1.4rem;
             color: var(--primary-dark);
             font-weight: bold;
-            margin-bottom: 15px;
         }
 
         .modal-desc {
@@ -419,9 +447,12 @@
             <button class="close-btn" onclick="closeModal(true)">&times;</button>
             <div class="modal-gallery" id="modalGallery"></div>
             <h2 class="modal-title" id="modalTitle">Nama Barang</h2>
-            <div class="modal-price" id="modalPrice">Rp 0</div>
+            <div class="modal-price-wrapper" id="modalPriceWrapper">
+                <div class="modal-price-original" id="modalPriceOriginal" style="display: none;"></div>
+                <div class="modal-price" id="modalPrice">Rp 0</div>
+            </div>
             <div class="modal-desc" id="modalDesc">Deskripsi barang...</div>
-            <button class="modal-btn-action">Beli Sekarang</button>
+            <button class="modal-btn-action">Tanyakan Produk</button>
         </div>
     </div>
 
@@ -429,7 +460,7 @@
         <div class="floating-footer-text">
             Pesan di WhatsApp
         </div>
-        <a href="https://wa.me/" class="floating-footer-btn" target="_blank" title="Chat WhatsApp">
+        <a href="https://wa.me/6282237395660" class="floating-footer-btn" target="_blank" title="Chat WhatsApp">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
                 <path
                     d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z" />
@@ -447,20 +478,24 @@
         const dataToko = [
             {
                 kategori: "Barang Baru",
+                aktif: true,
                 produk: [
-                    { id: 1, nama: "Jasa buatkan website", harga: "Start From Rp 35.000", gambar: ["barang/web1.png", "barang/web2.png"], deskripsi: "Website untuk UMKM, Portofolio/branding, dan lain sebagainya. Harga terjangkau dan kualitas terjamin." }
+                    { id: 1, nama: "Jasa buatkan website sederhana", harga: "Start From Rp 35.000", gambar: ["barang/web1.png", "barang/web2.png"], deskripsi: "Website untuk UMKM, Portofolio/branding, dan lain sebagainya. Harga terjangkau dan kualitas terjamin." },
+                    { id: 2, nama: "Buat dirimu dikenal google", harga: "Start From Rp 45.000", gambar: ["barang/dknlg1.jpg"], deskripsi: "Jasa pembuatan website agar nama anda bisa ditemukan di google. Cocok untuk Personal Branding." }
                 ]
             },
             {
                 kategori: "Barang Promo",
+                aktif: true, // Ubah 'true' menjadi 'false' jika sedang tidak ada promo untuk menghilangkan kategori ini
                 produk: [
-                    { id: 5, nama: "Kaos Polos Cotton Combed", harga: "Rp 45.000", gambar: ["https://picsum.photos/400?5", "https://picsum.photos/400?6"], deskripsi: "Kaos sangat lembut. Promo beli 2 gratis 1." },
-                    { id: 6, nama: "Topi Baseball", harga: "Rp 35.000", gambar: ["https://picsum.photos/400?7"], deskripsi: "Topi kasual, bahan kanvas tebal. Diskon 50%!" },
-                    { id: 7, nama: "Dompet Kulit Pria", harga: "Rp 75.000", gambar: ["https://picsum.photos/400?8"], deskripsi: "Dompet lipat tipis namun muat banyak kartu." }
+                    { id: 5, nama: "Gantunagn Kunci retro", harga: "Rp 20.000", hargaAsli: "Rp 25.000", gambar: ["barang/gc1.jpg", "barang/gc2.jpg"], deskripsi: "Gantungan kunci yang bisa merekam suara dan memutar lagu, cocok untuk couple atau hadiah." },
+                    { id: 6, nama: "Topi Baseball", harga: "Rp 35.000", hargaAsli: "Rp 70.000", gambar: ["https://picsum.photos/400?7"], deskripsi: "Topi kasual, bahan kanvas tebal. Diskon 50%!" },
+                    { id: 7, nama: "Dompet Kulit Pria", harga: "Rp 75.000", hargaAsli: "Rp 150.000", gambar: ["https://picsum.photos/400?8"], deskripsi: "Dompet lipat tipis namun muat banyak kartu." }
                 ]
             },
             {
-                kategori: "Aksesoris Acak",
+                kategori: "Semua Barang",
+                aktif: true,
                 produk: [
                     { id: 8, nama: "Earphone TWS Bluetooth", harga: "Rp 120.000", gambar: ["https://picsum.photos/400?9", "https://picsum.photos/400?10", "https://picsum.photos/400?11"], deskripsi: "Suara bass mantap, baterai tahan 4 jam pemakaian aktif." },
                     { id: 9, nama: "Kabel Data Type-C", harga: "Rp 25.000", gambar: ["https://picsum.photos/400?12"], deskripsi: "Kabel braided, mendukung fast charging hingga 3A." }
@@ -468,8 +503,9 @@
             }
         ];
 
-        // Menyimpan semua produk ke dalam satu referensi datar untuk pencarian modal
-        const semuaProduk = dataToko.flatMap(kat => kat.produk);
+        // Filter hanya kategori yang memiliki properti aktif bernilai true
+        const kategoriAktif = dataToko.filter(kat => kat.aktif !== false);
+        const semuaProduk = kategoriAktif.flatMap(kat => kat.produk);
 
         // =========================================================================
         // SISTEM RENDER HTML
@@ -477,7 +513,7 @@
         const mainContent = document.getElementById("main-content");
 
         // Fungsi me-render kategori dan baris produk
-        dataToko.forEach(kategoriData => {
+        kategoriAktif.forEach(kategoriData => {
             // Buat Header Kategori
             const headerElement = document.createElement("div");
             headerElement.className = "section-header";
@@ -514,11 +550,15 @@
                 card.className = "card";
                 card.onclick = () => openModal(item.id);
 
+                const tagHargaAsli = item.hargaAsli ? `<div class="card-price-original">${item.hargaAsli}</div>` : '';
                 card.innerHTML = `
                     <img src="${item.gambar[0]}" alt="${item.nama}" loading="lazy">
                     <div class="card-body">
                         <div class="card-title">${item.nama}</div>
-                        <div class="card-price">${item.harga}</div>
+                        <div class="card-price-wrapper">
+                            ${tagHargaAsli}
+                            <div class="card-price">${item.harga}</div>
+                        </div>
                         <button class="btn-pesan" onclick="event.stopPropagation(); openModal(${item.id})">Cek</button>
                     </div>
                 `;
@@ -541,7 +581,22 @@
             // Masukkan data ke dalam Modal
             document.getElementById("modalTitle").innerText = produk.nama;
             document.getElementById("modalPrice").innerText = produk.harga;
+
+            const originalPriceEl = document.getElementById("modalPriceOriginal");
+            if (produk.hargaAsli) {
+                originalPriceEl.innerText = produk.hargaAsli;
+                originalPriceEl.style.display = "block";
+            } else {
+                originalPriceEl.style.display = "none";
+            }
+
             document.getElementById("modalDesc").innerText = produk.deskripsi;
+
+            // Atur fungsi tombol "Beli Sekarang" agar mengirim pesan ke WhatsApp
+            document.querySelector(".modal-btn-action").onclick = () => {
+                const textPesan = `Halo, saya ingin bertanya tentang produk:\n\n*${produk.nama}*\nHarga: ${produk.harga}\n\nApakah barang ini masih tersedia?`;
+                window.open(`https://wa.me/6282237395660?text=${encodeURIComponent(textPesan)}`, "_blank");
+            };
 
             // Generate gallery gambar (bisa di-swipe)
             const gallery = document.getElementById("modalGallery");
@@ -575,7 +630,7 @@
             if (!kategoriData) return;
 
             document.getElementById("categoryModalTitle").innerText = namaKategori;
-            
+
             const grid = document.getElementById("categoryModalGrid");
             grid.innerHTML = "";
 
@@ -587,11 +642,15 @@
                     setTimeout(() => openModal(item.id), 10);
                 };
 
+                const tagHargaAsli = item.hargaAsli ? `<div class="card-price-original">${item.hargaAsli}</div>` : '';
                 card.innerHTML = `
                     <img src="${item.gambar[0]}" alt="${item.nama}" loading="lazy">
                     <div class="card-body">
                         <div class="card-title">${item.nama}</div>
-                        <div class="card-price">${item.harga}</div>
+                        <div class="card-price-wrapper">
+                            ${tagHargaAsli}
+                            <div class="card-price">${item.harga}</div>
+                        </div>
                         <button class="btn-pesan" onclick="event.stopPropagation(); closeCategoryModal(true); setTimeout(() => openModal(${item.id}), 10);">Cek</button>
                     </div>
                 `;
