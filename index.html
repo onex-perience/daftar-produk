@@ -488,20 +488,30 @@
                 kategori: "Barang Promo",
                 aktif: true, // Ubah 'true' menjadi 'false' jika sedang tidak ada promo untuk menghilangkan kategori ini
                 produk: [
-                    { id: 5, nama: "Gantunagn Kunci retro", harga: "Rp 20.000", hargaAsli: "Rp 25.000", gambar: ["barang/gc1.jpg", "barang/gc2.jpg"], deskripsi: "Gantungan kunci yang bisa merekam suara dan memutar lagu, cocok untuk couple atau hadiah." },
-                    { id: 6, nama: "Topi Baseball", harga: "Rp 35.000", hargaAsli: "Rp 70.000", gambar: ["https://picsum.photos/400?7"], deskripsi: "Topi kasual, bahan kanvas tebal. Diskon 50%!" },
-                    { id: 7, nama: "Dompet Kulit Pria", harga: "Rp 75.000", hargaAsli: "Rp 150.000", gambar: ["https://picsum.photos/400?8"], deskripsi: "Dompet lipat tipis namun muat banyak kartu." }
+                    { id: 5, nama: "Gantungan Kunci retro", harga: "Rp 20.000", hargaAsli: "Rp 25.000", gambar: ["barang/gc1.jpg", "barang/gc2.jpg"], deskripsi: "Gantungan kunci yang bisa merekam suara dan memutar lagu, cocok untuk couple atau hadiah." }
                 ]
             },
             {
                 kategori: "Semua Barang",
                 aktif: true,
                 produk: [
-                    { id: 8, nama: "Earphone TWS Bluetooth", harga: "Rp 120.000", gambar: ["https://picsum.photos/400?9", "https://picsum.photos/400?10", "https://picsum.photos/400?11"], deskripsi: "Suara bass mantap, baterai tahan 4 jam pemakaian aktif." },
-                    { id: 9, nama: "Kabel Data Type-C", harga: "Rp 25.000", gambar: ["https://picsum.photos/400?12"], deskripsi: "Kabel braided, mendukung fast charging hingga 3A." }
+
                 ]
             }
         ];
+
+        // Otomatis mengumpulkan semua barang ke dalam kategori "Semua Barang"
+        const targetSemua = dataToko.find(k => k.kategori === "Semua Barang");
+        if (targetSemua) {
+            const barangLain = dataToko
+                .filter(k => k.kategori !== "Semua Barang")
+                .flatMap(k => k.produk);
+                
+            // Menghindari duplikasi secara otomatis
+            const produkUnik = new Map();
+            barangLain.forEach(p => produkUnik.set(p.id, p));
+            targetSemua.produk = Array.from(produkUnik.values());
+        }
 
         // Filter hanya kategori yang memiliki properti aktif bernilai true
         const kategoriAktif = dataToko.filter(kat => kat.aktif !== false);
